@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 
@@ -11,6 +13,12 @@ def get_user(hostname):
 
     return user
 
+def tobool(string):
+    if string == "1":
+        return True
+    else:
+        return False
+
 # Create your views here.
 def test(request):
     return HttpResponse("200 OK")
@@ -21,7 +29,8 @@ def log_sysinfo_endpoint(request):
 
     try: # Try get data from the request
         hostname = request.GET['hostname']
-    except: return BAD_REQUEST
+    except: 
+        return BAD_REQUEST
     
     user = get_user(hostname)
     
@@ -37,10 +46,10 @@ def log_gamesettings_endpoint(request):
     try:
         hostname = request.GET['hostname']
         res = request.GET['res']
-        mtog = request.GET['mtog']
-        stog = request.GET['stog']
-        mvol = request.GET['mvol']
-        svol = request.GET['svol']
+        mtog = tobool(request.GET['mtog'])
+        stog = tobool(request.GET['stog'])
+        mvol = float(request.GET['mvol'])
+        svol = float(request.GET['svol'])
         gset = request.GET['gset']
     except: 
         return BAD_REQUEST
@@ -66,15 +75,17 @@ def log_click_event_endpoint(request):
 
     try:
         hostname = request.GET['hostname']
-        local_timestamp = request.GET['time']
-        action = request.GET['action']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
+        action = int(request.GET['action'])
     except: 
         return BAD_REQUEST
     
     user = get_user(hostname)
 
-    clickevent_obj = ClickEvent(user = user, local_timestamp = local_timestamp, event_type = "CLICK", action = action)
+    clickevent_obj = ClickEvent(user = user, local_timestamp = local_timestamp, event_type = "CLICK", action_id = action)
     clickevent_obj.save()
+
+    return OK
 
 def log_session_event_endpoint(request):
     if request.method != "GET":
@@ -82,13 +93,13 @@ def log_session_event_endpoint(request):
 
     try:
         hostname = request.GET['hostname']
-        local_timestamp = request.GET['time']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
         session_event_type = request.GET['setype']
-        mode = request.GET['mode']
-        elapsed = request.GET['elapsed']
-        score1 = request.GET['s1']
-        score2 = request.GET['s2']
-        bounces = request['bounces']
+        mode = int(request.GET['mode'])
+        elapsed = int(request.GET['elapsed'])
+        score1 = int(request.GET['s1'])
+        score2 = int(request.GET['s2'])
+        bounces = int(request['bounces'])
     except: 
         return BAD_REQUEST
     
@@ -115,7 +126,7 @@ def log_error_event_endpoint(request):
 
     try:
         hostname = request.GET['hostname']
-        local_timestamp = request.GET['time']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
         err = request.GET['err']
     except: 
         return BAD_REQUEST
