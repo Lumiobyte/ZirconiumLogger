@@ -9,7 +9,7 @@ BAD_REQUEST = JsonResponse({'reponse': "400 Bad request"}, status = 400)
 OK = JsonResponse({'reponse': "200 OK"}, status = 200)
 
 def get_user(hostname):
-    user, created = User.objects.get_or_create()
+    user, created = User.objects.get_or_create(device_hostname = hostname)
 
     return user
 
@@ -19,9 +19,41 @@ def tobool(string):
     else:
         return False
 
-# Create your views here.
+###### FRONTEND VIEWS
 def test(request):
     return HttpResponse("200 OK")
+
+def home(request):
+
+    response_string = "<ul>"
+
+    for item in User.objects.all():
+        response_string += f"<li><a href=\"/{item.device_hostname}\">{item.device_hostname} since {item.first_seen}</a></li>"
+    
+    response_string += "</ul>"
+
+    return HttpResponse(response_string)
+
+def user_overview(request, hostname):
+
+    response_string = "<ul>"
+
+    user = User.objects.get(device_hostname = hostname)
+    if user is None: # DOES NOT WORK! It throws DoesNotExist if no entry is found
+        response_string = f"{hostname} not found"
+    else:
+        user_events = Event.objects.filter(user = user)
+        if len(user_events) == 0:
+            response_string = f"{hostname} has no logged events"
+        else:
+            for event in user_events:
+                response_string += f"<li>{event.event_type}</li>"
+            response_string += "</ul>"
+
+    
+    return HttpResponse(response_string)
+
+##### ENDPOINT VIEWS
 
 def log_sysinfo_endpoint(request):
     if request.method != "GET":
