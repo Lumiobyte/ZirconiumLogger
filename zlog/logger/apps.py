@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ZirconiumloggerConfig(AppConfig):
+class LoggerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'zirconiumlogger'
+    name = 'logger'
