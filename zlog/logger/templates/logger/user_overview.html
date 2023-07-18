@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User {{ }} | Zirconium</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+        <style>
+            body{
+                font-family: 'Roboto', sans-serif; 
+                font-size:larger;
+                text-align: left;
+                background-color: #0d1117;
+                margin: 0;
+                color: #ecf2f8
+            }
+
+            .navbar{
+                background-color: #21262d;
+                overflow: hidden;
+                color: #a2d2fb;
+            }
+
+            .navbar a{
+                float: left;
+                vertical-align: middle;
+                padding: 11px;
+                text-align: center;
+                text-decoration: None;
+                color: #a2d2fb;
+                border-radius: 5px;
+                margin: 8px;
+            }
+
+            .navbar a:hover{
+                background-color: #3b4046;
+            }
+
+            .navbar h4{
+                float: right;
+                padding-right: 20px;
+                margin: 18px;
+            }
+
+            .main-container{
+                margin: 1%;
+                width: 99%;
+                /* display: flex; */
+            }
+
+            .logs-pane{
+                padding: 10px;
+                width: 70%;
+                float: left;
+                /* flex-grow: 1; */
+            }
+
+            .info-pane{
+                margin-left: 50px;
+                padding: 10px;
+                text-align: left;
+                /* flex-grow: 0; */
+                width: 20%;
+                float: left;
+                border: 1px solid #a2d2fb;
+                border-radius: 5px;
+                background-color: #1c1f23;
+            }
+
+            .info-pane h2{
+                text-align: center;
+                padding: 0px 20px;
+            }
+
+            .info-pane ul{
+                list-style: none;
+                padding-left: 10px;
+                padding-bottom: 5px;
+            }
+
+            .info-pane li{
+                padding: 1px 0px;
+            }
+
+            .log-item{
+                padding: 5px;
+            }
+
+            .collapsible {
+                background-color: #1c1f23;
+                color: white;
+                cursor: pointer;
+                padding: 18px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-size: 15px;
+            }
+
+            .click-event{
+                border: 1px solid #faa356;
+                color:#faa356;
+                border-radius: 5px;
+            }
+
+            .session-event{
+                border: 1px solid #7ce38b;
+                color:#7ce38b;
+                border-radius: 5px;
+            }
+
+            .error-event{
+                border: 1px solid #fa7970;
+                color:#fa7970;
+                border-radius: 5px;
+            }
+
+            .active, .collapsible:hover {
+                background-color: #21262d;
+            }
+
+            .collapsible-content {
+                padding: 0 18px;
+                display: none;
+                overflow: hidden;
+                background-color: #262c34;
+                color:white;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="navbar">
+            <a href = "#">◀️ Back</a>
+            <a href = "#">🏠 Home</a>
+            <a href = "#">🔒 Admin Panel</a>
+            <h4><strong>Zirconium Logger</strong></h4>
+        </div>
+
+        <div class="main-container">
+            <div class="logs-pane">
+                <h1>Event History</h1>
+                <div class="log-item">
+                    <div type="button" class="collapsible click-event">CLICK</div>
+                    <div class="collapsible-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+
+                <div class="log-item">
+                    <div type="button" class="collapsible session-event">SESSION</div>
+                    <div class="collapsible-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+
+                <div class="log-item">
+                    <div type="button" class="collapsible error-event">ERROR</div>
+                    <div class="collapsible-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-pane">
+                <h2>User Information</h1>
+                <ul>
+                    <li>First seen: </li>
+                    <li>Hostname: </li>
+                </ul>
+                <hr>
+                <h2>Game Settings</h1>
+                <ul>
+                    <li>Resolution: </li>
+                    <li>Music: </li>
+                    <li>Sound: </li>
+                    <li>Score goals: </li>
+                    <li>Ball speeds: </li>
+                    <li>Powerups: </li>
+                    <li>AI difficulty: </li>
+                    <li>Serve miss: </li>
+                    <li>Ball speedup: </li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+            
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                  content.style.display = "none";
+                } else {
+                  content.style.display = "block";
+                }
+              });
+            }
+        </script>
+    </body>
+</html>

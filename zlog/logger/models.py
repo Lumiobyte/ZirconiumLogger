@@ -1,6 +1,11 @@
 from django.db import models
 
 # Create your models here.
+class ButtonDefinition(models.Model): # Will be created in admin panel
+
+    action_id = models.IntegerField(default = 0)
+    action_string = models.CharField(max_length = 50)
+
 class User(models.Model):
 
     first_seen = models.DateTimeField(auto_now_add = True)
