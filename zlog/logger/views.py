@@ -36,22 +36,33 @@ def home(request):
 
 def user_overview(request, hostname):
 
-    response_string = "<ul>"
-
     user = User.objects.get(device_hostname = hostname)
-    if user is None: # DOES NOT WORK! It throws DoesNotExist if no entry is found
-        response_string = f"{hostname} not found"
-    else:
-        user_events = Event.objects.filter(user = user)
-        if len(user_events) == 0:
-            response_string = f"{hostname} has no logged events"
-        else:
-            for event in user_events:
-                response_string += f"<li>{event.event_type}</li>"
-            response_string += "</ul>"
 
+    context = {}
+    user_events = Event.objects.filter(user = user)
+
+    context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname}
+    context['gameplay_settings'] = {}
+    context['events'] = []
+    context['event_count'] = user_events.count()
+
+    for event in user_events:
+        if event.event_type == "CLICK":
+            event_info = {'type': "CLICK", 'timestamp': event.local_timestamp, 'action_id': event.clickevent.action_id, 'action_desc': "Placeholder"}
+        elif event.event_type == "SESSION":
+            event_info = {'type': "SESSION",
+                          'timestamp': event.local_timestamp,
+                          'session_type': event.gamesessionevent.session_event_type,
+                          'gamemode': ['AI vs AI', 'Player vs AI', 'Multiplayer', 'Competitive'][event.gamesessionevent.game_mode],
+                          'elapsed': event.gamesessionevent.game_time_elapsed,
+                          'score1': event.gamesessionevent.player1_score,
+                          'score2': event.gamesessionevent.player2_score,
+                          'bounces': event.gamesessionevent.total_bounces
+                          }
+
+        context['events'].append(event_info)
     
-    return HttpResponse(response_string)
+    return render(request, 'logger/user_overview.html', context)
 
 ##### ENDPOINT VIEWS
 
@@ -131,7 +142,7 @@ def log_session_event_endpoint(request):
         elapsed = int(request.GET['elapsed'])
         score1 = int(request.GET['s1'])
         score2 = int(request.GET['s2'])
-        bounces = int(request['bounces'])
+        bounces = int(request.GET['bounces'])
     except: 
         return BAD_REQUEST
     

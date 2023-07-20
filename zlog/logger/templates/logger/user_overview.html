@@ -1,175 +1,80 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>User {{ }} | Zirconium</title>
+        <title>User {{ user_info.hostname }} | Zirconium</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 
-        <style>
-            body{
-                font-family: 'Roboto', sans-serif; 
-                font-size:larger;
-                text-align: left;
-                background-color: #0d1117;
-                margin: 0;
-                color: #ecf2f8
-            }
-
-            .navbar{
-                background-color: #21262d;
-                overflow: hidden;
-                color: #a2d2fb;
-            }
-
-            .navbar a{
-                float: left;
-                vertical-align: middle;
-                padding: 11px;
-                text-align: center;
-                text-decoration: None;
-                color: #a2d2fb;
-                border-radius: 5px;
-                margin: 8px;
-            }
-
-            .navbar a:hover{
-                background-color: #3b4046;
-            }
-
-            .navbar h4{
-                float: right;
-                padding-right: 20px;
-                margin: 18px;
-            }
-
-            .main-container{
-                margin: 1%;
-                width: 99%;
-                /* display: flex; */
-            }
-
-            .logs-pane{
-                padding: 10px;
-                width: 70%;
-                float: left;
-                /* flex-grow: 1; */
-            }
-
-            .info-pane{
-                margin-left: 50px;
-                padding: 10px;
-                text-align: left;
-                /* flex-grow: 0; */
-                width: 20%;
-                float: left;
-                border: 1px solid #a2d2fb;
-                border-radius: 5px;
-                background-color: #1c1f23;
-            }
-
-            .info-pane h2{
-                text-align: center;
-                padding: 0px 20px;
-            }
-
-            .info-pane ul{
-                list-style: none;
-                padding-left: 10px;
-                padding-bottom: 5px;
-            }
-
-            .info-pane li{
-                padding: 1px 0px;
-            }
-
-            .log-item{
-                padding: 5px;
-            }
-
-            .collapsible {
-                background-color: #1c1f23;
-                color: white;
-                cursor: pointer;
-                padding: 18px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-size: 15px;
-            }
-
-            .click-event{
-                border: 1px solid #faa356;
-                color:#faa356;
-                border-radius: 5px;
-            }
-
-            .session-event{
-                border: 1px solid #7ce38b;
-                color:#7ce38b;
-                border-radius: 5px;
-            }
-
-            .error-event{
-                border: 1px solid #fa7970;
-                color:#fa7970;
-                border-radius: 5px;
-            }
-
-            .active, .collapsible:hover {
-                background-color: #21262d;
-            }
-
-            .collapsible-content {
-                padding: 0 18px;
-                display: none;
-                overflow: hidden;
-                background-color: #262c34;
-                color:white;
-            }
+        {% include "logger/style.html" %}
 
         </style>
     </head>
     <body>
-        <div class="navbar">
-            <a href = "#">◀️ Back</a>
-            <a href = "#">🏠 Home</a>
-            <a href = "#">🔒 Admin Panel</a>
-            <h4><strong>Zirconium Logger</strong></h4>
-        </div>
+        {% include "logger/navbar.html" %}
 
         <div class="main-container">
             <div class="logs-pane">
-                <h1>Event History</h1>
-                <div class="log-item">
-                    <div type="button" class="collapsible click-event">CLICK</div>
-                    <div class="collapsible-content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </div>
-                </div>
+                <h1>Event History ({{ event_count }})</h1>
+                {% for event in events %}
+                    {% if event.type == "CLICK" %}
+                        <div class="log-item-container click-event">
+                            <div class="log-item event-colour">
+                                <p><strong>CLICK</strong></p>
+                                <p class="details">{{ event.action_desc }} - {{ event.action_id }}</p>
+                                <p class="timestamp">{{ event.timestamp }}</p>
+                            </div>
+                        </div>
 
-                <div class="log-item">
-                    <div type="button" class="collapsible session-event">SESSION</div>
-                    <div class="collapsible-content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </div>
-                </div>
+                    {% elif event.type == "SESSION" %}
+                        <div class="log-item-container session-event ">
+                            <div type="button" class="collapsible log-item event-colour">
+                                <p><strong>SESSION</strong></p>
+                                <p class="details">{{ event.session_type }} in {{ event.gamemode }}</p>
+                                <p class="timestamp">{{ event.timestamp }}</p>
+                            </div>
+                            <div class="collapsible-content">
+                                <table class="info-table" style="width:100%">
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Mode</th>
+                                        <th>Time Elapsed</th>
+                                        <th>Scores</th>
+                                        <th>Bounces</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ event.session_type }}</td>
+                                        <td>{{ event.gamemode }}</td>
+                                        <td>{{ event.elapsed }}</td>
+                                        <td><span style="color:yellow;">{{ event.score1 }}</span> - <span style="color:limegreen">{{ event.score2 }}</span></td>
+                                        <td>{{ event.bounces }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
-                <div class="log-item">
-                    <div type="button" class="collapsible error-event">ERROR</div>
-                    <div class="collapsible-content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </div>
-                </div>
+                    {% elif event.type == "ERROR" %}
+                        <div class="log-item-container error-event">
+                            <div type="button" class="collapsible log-item event-colour">
+                                <p><strong>ERROR</strong></p>
+                                <p class="details">Error</p>
+                                <p class="timestamp">11:20:12 AEST</p>
+                            </div>
+                            <div class="collapsible-content">
+                                <p>error error error error error error error error error error</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <div class="info-pane">
                 <h2>User Information</h1>
                 <ul>
-                    <li>First seen: </li>
-                    <li>Hostname: </li>
+                    <li>Hostname: {{ user_info.hostname }}</li>
+                    <li>First seen: {{ user_info.first_seen }}</li>
                 </ul>
                 <hr>
                 <h2>Game Settings</h1>
