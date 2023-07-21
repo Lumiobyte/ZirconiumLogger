@@ -59,11 +59,11 @@
                         <div class="log-item-container error-event">
                             <div type="button" class="collapsible log-item event-colour">
                                 <p><strong>ERROR</strong></p>
-                                <p class="details">Error</p>
-                                <p class="timestamp">11:20:12 AEST</p>
+                                <p class="details">{{ event.error_name }}</p>
+                                <p class="timestamp">{{ event.timestamp }}</p>
                             </div>
                             <div class="collapsible-content">
-                                <p>error error error error error error error error error error</p>
+                                <p>{{ event.error_string }}</p>
                             </div>
                         </div>
                     {% endif %}
@@ -78,17 +78,48 @@
                 </ul>
                 <hr>
                 <h2>Game Settings</h1>
-                <ul>
-                    <li>Resolution: </li>
-                    <li>Music: </li>
-                    <li>Sound: </li>
-                    <li>Score goals: </li>
-                    <li>Ball speeds: </li>
-                    <li>Powerups: </li>
-                    <li>AI difficulty: </li>
-                    <li>Serve miss: </li>
-                    <li>Ball speedup: </li>
-                </ul>
+                <table style="width:100%">
+                    <tr>
+                        <td>Resolution:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.res }}</td>
+                    </tr>
+                    <tr>
+                        <td>Music:</td>
+                        <td colspan="2">{% if settings.mtog %}<span style="color:limegreen;">ON</span>{% else %}<span style="color:red;">OFF</span>{% endif %} / <span style="color:#89929b">{{ settings.mvol }}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Sound:</td>
+                        <td colspan="2">{% if settings.stog %}<span style="color:limegreen;">ON</span>{% else %}<span style="color:red;">OFF</span>{% endif %} / <span style="color:#89929b">{{ settings.svol }}</td>
+                    </tr>
+                    <tr>
+                        <td>Score goals:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.cas_goal }} <span style="color:#ecf2f8">/</span> {{ settings.comp_goal }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ball speeds:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.cas_speed }} <span style="color:#ecf2f8">/</span> {{ settings.comp_speed }}</td>
+                    </tr>
+                    <tr>
+                        <td>Powerups:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.powerups }}</td>
+                    </tr>
+                    <tr>
+                        <td>AI difficulty:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.ai_diff }}</td>
+                    </tr>
+                    <tr>
+                        <td>Serve miss:</td>
+                        <td colspan="2" style="color:#89929b">{{ settings.serve_miss }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ball speedup:</td>
+                        <td colspan="2">{% if settings.ball_speedup %}<span style="color:limegreen;">ON</span>{% else %}<span style="color:red;">OFF</span>{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>Last updated:</td>
+                        <td colspan="2" class="timestamp" style="float:none;">{{ settings.last_updated|date:'d/m/y H:i' }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
 

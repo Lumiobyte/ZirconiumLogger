@@ -42,10 +42,11 @@ class GameSettings(models.Model):
     music_volume = models.FloatField()
     sound_volume = models.FloatField()
 
-    gameplay_settings = models.CharField(max_length = 19) # a string representing settings e.g. "100,2,3,1" meaning score goal 100, fast ball, many powerups, normal ai
+    gameplay_settings = models.JSONField(null = True)
 
     class Meta:
         ordering = ['-entry_created']
+        get_latest_by = "-entry_created"
 
 
 class Event(models.Model):
@@ -81,4 +82,5 @@ class GameSessionEvent(Event):
 
 class ErrorEvent(Event):
 
+    error_name = models.TextField()
     error_string = models.TextField()

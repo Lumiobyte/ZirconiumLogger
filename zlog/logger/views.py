@@ -13,8 +13,8 @@ def get_user(hostname):
 
     return user
 
-def tobool(string):
-    if string == "1":
+def tobool(value):
+    if value == "1" or value == 1:
         return True
     else:
         return False
@@ -42,7 +42,6 @@ def user_overview(request, hostname):
     user_events = Event.objects.filter(user = user)
 
     context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname}
-    context['gameplay_settings'] = {}
     context['events'] = []
     context['event_count'] = user_events.count()
 
@@ -59,8 +58,22 @@ def user_overview(request, hostname):
                           'score2': event.gamesessionevent.player2_score,
                           'bounces': event.gamesessionevent.total_bounces
                           }
+        elif event.event_type == "ERROR":
+            event_info = {'type': "ERROR", 'timestamp': event.local_timestamp, 'error_name': event.errorevent.error_name, 'error_string': event.errorevent.error_string}
 
         context['events'].append(event_info)
+
+    user_settings = GameSettings.objects.filter(user = user).latest() # if doesn't exist, set gameplay_settings in context to none
+
+    print(user_settings)
+
+    context['settings'] = dict({'last_updated': user_settings.entry_created,
+                                'res': user_settings.game_resolution,
+                                'mtog': tobool(user_settings.music_toggle),
+                                'stog': tobool(user_settings.sound_toggle),
+                                'mvol': user_settings.music_volume,
+                                'svol': user_settings.sound_volume,
+                                } | user_settings.gameplay_settings)
     
     return render(request, 'logger/user_overview.html', context)
 
@@ -98,6 +111,29 @@ def log_gamesettings_endpoint(request):
         return BAD_REQUEST
     
     user = get_user(hostname)
+
+    gset_json_untranslated = {}
+    keys = ['cas_goal', 'cas_speed', 'powerups', 'ai_diff', 'comp_goal', 'comp_speed', 'serve_miss', 'ball_speedup']
+    for i, value in enumerate(gset.split('z')):
+        gset_json_untranslated[keys[i]] = tobool(value) if i == 7 else value
+
+    gameplay_setting_text_map = {
+        "cas_goal": None,
+        "cas_speed": ["Normal", "Fast"],
+        "powerups":  ["OFF", "Few", "Normal", "Many", "Party"],
+        "ai_diff": ["Easy", "Normal", "Hard"],
+        "comp_goal": None,
+        "comp_speed": ["Normal", "Fast"],
+        "serve_miss": ["None", "Lose Point", "Lose Life"],
+        "ball_speedup": {True: "ON", False: "OFF"}
+    }
+
+    gset_json_translated = {}
+    for setting in gameplay_setting_text_map:
+        if gameplay_setting_text_map[setting] is None:
+            gset_json_translated[setting] = gset_json_untranslated[setting]
+        else:
+            gset_json_translated[setting] = gameplay_setting_text_map[setting][gset_json_untranslated[setting]]
     
     gamesettings_obj = GameSettings(
         user = user,
@@ -106,7 +142,7 @@ def log_gamesettings_endpoint(request):
         sound_toggle = stog,
         music_volume = mvol,
         sound_volume = svol,
-        gameplay_settings = gset
+        gameplay_settings = gset_json_translated
     )
     gamesettings_obj.save()
 
@@ -170,13 +206,14 @@ def log_error_event_endpoint(request):
     try:
         hostname = request.GET['hostname']
         local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
+        err_name = request.GET['err_name']
         err = request.GET['err']
     except: 
         return BAD_REQUEST
     
     user = get_user(hostname)
 
-    errorevent_obj = ErrorEvent(user = user, local_timestamp = local_timestamp, event_type = "ERROR", error_string = err)
+    errorevent_obj = ErrorEvent(user = user, local_timestamp = local_timestamp, event_type = "ERROR", error_name = err_name, error_string = err)
     errorevent_obj.save()
 
     return OK
