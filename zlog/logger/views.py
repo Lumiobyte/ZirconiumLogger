@@ -25,14 +25,13 @@ def test(request):
 
 def home(request):
 
-    response_string = "<ul>"
+    users =  User.objects.all()
+    context = {'users': [], 'user_count': users.count()}
 
-    for item in User.objects.all():
-        response_string += f"<li><a href=\"/{item.device_hostname}\">{item.device_hostname} since {item.first_seen}</a></li>"
-    
-    response_string += "</ul>"
+    for item in users:
+        context['users'].append(item)
 
-    return HttpResponse(response_string)
+    return render(request, 'logger/home.html', context)
 
 def user_overview(request, hostname):
 

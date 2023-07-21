@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Zirconium Logger</title>
+        {% include "logger/style.html" %}
+    </head>
+    <body>
+        {% include "logger/navbar.html" %}
+
+        <div class="main-container">
+            <h1>Users ({{ user_count }})</h1>
+            <ul>
+                {% for user in users %}
+                    <li class="user-link"><a href="/{{ user.device_hostname }}">{{ user.device_hostname }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>
