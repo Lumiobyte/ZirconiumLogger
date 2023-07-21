@@ -13,6 +13,12 @@ def get_user(hostname):
 
     return user
 
+def get_button_definition(action_id):
+    try:
+        return ButtonDefinition.objects.get(action_id = action_id).action_string
+    except ButtonDefinition.DoesNotExist:
+        return "Unknown Button"
+
 def tobool(value):
     if value == "1" or value == 1:
         return True
@@ -46,7 +52,7 @@ def user_overview(request, hostname):
 
     for event in user_events:
         if event.event_type == "CLICK":
-            event_info = {'type': "CLICK", 'timestamp': event.local_timestamp, 'action_id': event.clickevent.action_id, 'action_desc': "Placeholder"}
+            event_info = {'type': "CLICK", 'timestamp': event.local_timestamp, 'action_id': event.clickevent.action_id, 'action_desc': get_button_definition(event.clickevent.action_id)}
         elif event.event_type == "SESSION":
             event_info = {'type': "SESSION",
                           'timestamp': event.local_timestamp,
@@ -55,7 +61,8 @@ def user_overview(request, hostname):
                           'elapsed': event.gamesessionevent.game_time_elapsed,
                           'score1': event.gamesessionevent.player1_score,
                           'score2': event.gamesessionevent.player2_score,
-                          'bounces': event.gamesessionevent.total_bounces
+                          'bounces': event.gamesessionevent.total_bounces,
+                          'misses': event.gamesessionevent.serves_missed
                           }
         elif event.event_type == "ERROR":
             event_info = {'type': "ERROR", 'timestamp': event.local_timestamp, 'error_name': event.errorevent.error_name, 'error_string': event.errorevent.error_string}
@@ -63,8 +70,6 @@ def user_overview(request, hostname):
         context['events'].append(event_info)
 
     user_settings = GameSettings.objects.filter(user = user).latest() # if doesn't exist, set gameplay_settings in context to none
-
-    print(user_settings)
 
     context['settings'] = dict({'last_updated': user_settings.entry_created,
                                 'res': user_settings.game_resolution,
@@ -178,6 +183,7 @@ def log_session_event_endpoint(request):
         score1 = int(request.GET['s1'])
         score2 = int(request.GET['s2'])
         bounces = int(request.GET['bounces'])
+        misses = int(request.GET['misses'])
     except: 
         return BAD_REQUEST
     
@@ -192,7 +198,8 @@ def log_session_event_endpoint(request):
         game_time_elapsed = elapsed,
         player1_score = score1,
         player2_score = score2,
-        total_bounces = bounces
+        total_bounces = bounces,
+        serves_missed = misses
     )
     sessionevent_obj.save()
 

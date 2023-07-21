@@ -35,6 +35,7 @@
                                         <th>Time Elapsed</th>
                                         <th>Scores</th>
                                         <th>Bounces</th>
+                                        <th>Serves Missed</th>
                                     </tr>
                                     <tr>
                                         <td>{{ event.session_type }}</td>
@@ -42,6 +43,7 @@
                                         <td>{{ event.elapsed }}</td>
                                         <td><span style="color:yellow;">{{ event.score1 }}</span> - <span style="color:limegreen">{{ event.score2 }}</span></td>
                                         <td>{{ event.bounces }}</td>
+                                        <td>{{ event.misses }}</td>
                                     </tr>
                                 </table>
                             </div>

@@ -79,6 +79,7 @@ class GameSessionEvent(Event):
     player2_score = models.PositiveIntegerField()
 
     total_bounces = models.PositiveIntegerField()
+    serves_missed = models.PositiveIntegerField()
 
 class ErrorEvent(Event):
 
