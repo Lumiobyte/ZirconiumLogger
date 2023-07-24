@@ -45,8 +45,9 @@ def user_overview(request, hostname):
 
     context = {}
     user_events = Event.objects.filter(user = user)
+    user_sysinfo = SystemInfo.objects.filter(user = user).latest()
 
-    context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname}
+    context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version}
     context['events'] = []
     context['event_count'] = user_events.count()
 
@@ -84,33 +85,36 @@ def user_overview(request, hostname):
 ##### ENDPOINT VIEWS
 
 def log_sysinfo_endpoint(request):
-    if request.method != "GET":
+    if request.method != "POST":
         return BAD_REQUEST
 
     try: # Try get data from the request
-        hostname = request.GET['hostname']
+        hostname = request.POST['hostname']
+        op_sys = request.POST['os']
+        proc = request.POST['processor']
+        pyver = request.POST['pyver']
     except: 
         return BAD_REQUEST
     
     user = get_user(hostname)
     
-    sysinfo_obj = SystemInfo(user = user)
+    sysinfo_obj = SystemInfo(user = user, operating_system = op_sys, processor = proc, python_version = pyver)
     sysinfo_obj.save()
 
     return OK
     
 def log_gamesettings_endpoint(request):
-    if request.method != "GET":
+    if request.method != "POST":
         return BAD_REQUEST
     
     try:
-        hostname = request.GET['hostname']
-        res = request.GET['res']
-        mtog = tobool(request.GET['mtog'])
-        stog = tobool(request.GET['stog'])
-        mvol = float(request.GET['mvol'])
-        svol = float(request.GET['svol'])
-        gset = request.GET['gset']
+        hostname = request.POST['hostname']
+        res = request.POST['res']
+        mtog = tobool(request.POST['mtog'])
+        stog = tobool(request.POST['stog'])
+        mvol = float(request.POST['mvol'])
+        svol = float(request.POST['svol'])
+        gset = request.POST['gset']
     except: 
         return BAD_REQUEST
     
@@ -153,13 +157,13 @@ def log_gamesettings_endpoint(request):
     return OK
 
 def log_click_event_endpoint(request):
-    if request.method != "GET":
+    if request.method != "POST":
         return BAD_REQUEST
 
     try:
-        hostname = request.GET['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
-        action = int(request.GET['action'])
+        hostname = request.POST['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
+        action = int(request.POST['action'])
     except: 
         return BAD_REQUEST
     
@@ -171,19 +175,19 @@ def log_click_event_endpoint(request):
     return OK
 
 def log_session_event_endpoint(request):
-    if request.method != "GET":
+    if request.method != "POST":
         return BAD_REQUEST
 
     try:
-        hostname = request.GET['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
-        session_event_type = request.GET['setype']
-        mode = int(request.GET['mode'])
-        elapsed = int(request.GET['elapsed'])
-        score1 = int(request.GET['s1'])
-        score2 = int(request.GET['s2'])
-        bounces = int(request.GET['bounces'])
-        misses = int(request.GET['misses'])
+        hostname = request.POST['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
+        session_event_type = request.POST['setype']
+        mode = int(request.POST['mode'])
+        elapsed = int(request.POST['elapsed'])
+        score1 = int(request.POST['s1'])
+        score2 = int(request.POST['s2'])
+        bounces = int(request.POST['bounces'])
+        misses = int(request.POST['misses'])
     except: 
         return BAD_REQUEST
     
@@ -206,14 +210,14 @@ def log_session_event_endpoint(request):
     return OK
 
 def log_error_event_endpoint(request):
-    if request.method != "GET":
+    if request.method != "POST":
         return BAD_REQUEST
 
     try:
-        hostname = request.GET['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.GET['time']))
-        err_name = request.GET['err_name']
-        err = request.GET['err']
+        hostname = request.POST['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
+        err_name = request.POST['err_name']
+        err = request.POST['err']
     except: 
         return BAD_REQUEST
     

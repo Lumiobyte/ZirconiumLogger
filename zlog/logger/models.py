@@ -23,11 +23,15 @@ class SystemInfo(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     entry_created = models.DateTimeField(auto_now_add = True)
 
-    # tech specs
+    operating_system = models.CharField(max_length = 100)
+    processor = models.CharField(max_length = 100)
+    python_version = models.CharField(max_length = 20)
+
     # timezone + locale
 
     class Meta:
         ordering = ['-entry_created']
+        get_latest_by = '-entry_created'
 
 
 class GameSettings(models.Model):
