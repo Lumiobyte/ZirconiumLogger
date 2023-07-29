@@ -1,6 +1,6 @@
 import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 
 from .models import *
@@ -26,10 +26,17 @@ def tobool(value):
         return False
 
 ###### FRONTEND VIEWS
-def test(request):
-    return HttpResponse("200 OK")
+def ping(request):
+    return OK
+
+def not_authenticated(request):
+
+    return render(request, 'logger/not_authenticated.html', {})
 
 def home(request):
+
+    if not request.user.is_authenticated:
+        return redirect(not_authenticated)
 
     users =  User.objects.all()
     context = {'users': [], 'user_count': users.count()}
@@ -40,6 +47,9 @@ def home(request):
     return render(request, 'logger/home.html', context)
 
 def user_overview(request, hostname):
+    
+    if not request.user.is_authenticated:
+        return redirect(not_authenticated)
 
     user = User.objects.get(device_hostname = hostname)
 
@@ -122,7 +132,7 @@ def log_gamesettings_endpoint(request):
 
     gset_json_untranslated = {}
     keys = ['cas_goal', 'cas_speed', 'powerups', 'ai_diff', 'comp_goal', 'comp_speed', 'serve_miss', 'ball_speedup']
-    for i, value in enumerate(gset.split('z')):
+    for i, value in enumerate(gset.split(',')):
         gset_json_untranslated[keys[i]] = tobool(value) if i == 7 else value
 
     gameplay_setting_text_map = {
