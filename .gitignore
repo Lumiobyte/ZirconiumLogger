@@ -1,4 +1,5 @@
 zlog/zlog/settings.py
+static/
 zlog/logger/migrations/
 
 # Byte-compiled / optimized / DLL files
