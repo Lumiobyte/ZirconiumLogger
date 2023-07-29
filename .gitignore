@@ -1,4 +1,5 @@
 zlog/zlog/settings.py
+zlog/logger/migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
