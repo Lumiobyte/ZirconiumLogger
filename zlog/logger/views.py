@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
@@ -47,7 +48,7 @@ def home(request):
     return render(request, 'logger/home.html', context)
 
 def user_overview(request, hostname):
-    
+
     if not request.user.is_authenticated:
         return redirect(not_authenticated)
 
@@ -94,6 +95,7 @@ def user_overview(request, hostname):
 
 ##### ENDPOINT VIEWS
 
+@csrf_exempt
 def log_sysinfo_endpoint(request):
     if request.method != "POST":
         return BAD_REQUEST
@@ -113,6 +115,7 @@ def log_sysinfo_endpoint(request):
 
     return OK
     
+@csrf_exempt
 def log_gamesettings_endpoint(request):
     if request.method != "POST":
         return BAD_REQUEST
@@ -166,6 +169,7 @@ def log_gamesettings_endpoint(request):
 
     return OK
 
+@csrf_exempt
 def log_click_event_endpoint(request):
     if request.method != "POST":
         return BAD_REQUEST
@@ -184,6 +188,7 @@ def log_click_event_endpoint(request):
 
     return OK
 
+@csrf_exempt
 def log_session_event_endpoint(request):
     if request.method != "POST":
         return BAD_REQUEST
@@ -219,6 +224,7 @@ def log_session_event_endpoint(request):
 
     return OK
 
+@csrf_exempt
 def log_error_event_endpoint(request):
     if request.method != "POST":
         return BAD_REQUEST
