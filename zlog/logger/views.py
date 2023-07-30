@@ -31,6 +31,9 @@ def create_dict(string):
     string = string.decode('UTF-8')
     return json.loads(string.replace("'", '"'))
 
+def merge_dicts(dict1, dict2):
+    return {**dict1, **dict2}
+
 
 ###### FRONTEND VIEWS
 def ping(request):
@@ -89,13 +92,13 @@ def user_overview(request, hostname):
 
     user_settings = GameSettings.objects.filter(user = user).latest() # if doesn't exist, set gameplay_settings in context to none
 
-    context['settings'] = dict({'last_updated': user_settings.entry_created,
+    context['settings'] = dict(merge_dicts({'last_updated': user_settings.entry_created,
                                 'res': user_settings.game_resolution,
                                 'mtog': tobool(user_settings.music_toggle),
                                 'stog': tobool(user_settings.sound_toggle),
                                 'mvol': user_settings.music_volume,
                                 'svol': user_settings.sound_volume,
-                                } | user_settings.gameplay_settings)
+                                }, user_settings.gameplay_settings))
     
     return render(request, 'logger/user_overview.html', context)
 
