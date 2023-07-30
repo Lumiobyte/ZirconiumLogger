@@ -100,7 +100,7 @@ def user_overview(request, hostname):
         context['settings'] = None
     else:
         context['settings'] = dict(merge_dicts({'last_updated': user_settings.entry_created,
-                                    'res': user_settings.game_resolution,
+                                    'res': "FULLSCREEN" if user_settings.game_resolution == "0" else user_settings.game_resolution,
                                     'mtog': tobool(user_settings.music_toggle),
                                     'stog': tobool(user_settings.sound_toggle),
                                     'mvol': user_settings.music_volume,
