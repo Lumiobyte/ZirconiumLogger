@@ -154,7 +154,7 @@ def log_gamesettings_endpoint(request):
     gset_json_untranslated = {}
     keys = ['cas_goal', 'cas_speed', 'powerups', 'ai_diff', 'comp_goal', 'comp_speed', 'serve_miss', 'ball_speedup']
     for i, value in enumerate(gset.split(',')):
-        gset_json_untranslated[keys[i]] = tobool(value) if i == 7 else value
+        gset_json_untranslated[keys[i]] = tobool(value) if i == 7 else int(value)
 
     gameplay_setting_text_map = {
         "cas_goal": None,
