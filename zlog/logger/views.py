@@ -43,6 +43,10 @@ def not_authenticated(request):
 
     return render(request, 'logger/not_authenticated.html', {})
 
+def home_redirect(request):
+
+    return redirect(home)
+
 def home(request):
 
     if not request.user.is_authenticated:
