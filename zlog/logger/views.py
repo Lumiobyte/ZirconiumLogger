@@ -65,9 +65,14 @@ def user_overview(request, hostname):
 
     context = {}
     user_events = Event.objects.filter(user = user)
-    user_sysinfo = SystemInfo.objects.filter(user = user).latest()
+    user_sysinfo = SystemInfo.objects.filter(user = user).first()
 
-    context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version}
+    if not user_sysinfo:
+        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': None}
+
+    else:
+        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version}
+    
     context['events'] = []
     context['event_count'] = user_events.count()
 
@@ -90,15 +95,17 @@ def user_overview(request, hostname):
 
         context['events'].append(event_info)
 
-    user_settings = GameSettings.objects.filter(user = user).latest() # if doesn't exist, set gameplay_settings in context to none
-
-    context['settings'] = dict(merge_dicts({'last_updated': user_settings.entry_created,
-                                'res': user_settings.game_resolution,
-                                'mtog': tobool(user_settings.music_toggle),
-                                'stog': tobool(user_settings.sound_toggle),
-                                'mvol': user_settings.music_volume,
-                                'svol': user_settings.sound_volume,
-                                }, user_settings.gameplay_settings))
+    user_settings = GameSettings.objects.filter(user = user).first() # if doesn't exist, set gameplay_settings in context to none
+    if not user_settings:
+        context['settings'] = None
+    else:
+        context['settings'] = dict(merge_dicts({'last_updated': user_settings.entry_created,
+                                    'res': user_settings.game_resolution,
+                                    'mtog': tobool(user_settings.music_toggle),
+                                    'stog': tobool(user_settings.sound_toggle),
+                                    'mvol': user_settings.music_volume,
+                                    'svol': user_settings.sound_volume,
+                                    }, user_settings.gameplay_settings))
     
     return render(request, 'logger/user_overview.html', context)
 
