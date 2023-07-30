@@ -6,7 +6,7 @@ urlpatterns = [
     path('forbidden/', views.not_authenticated, name = 'forbidden'),
 
     path('', views.home, name = 'homepage'),
-    path('<str:hostname>/', views.user_overview, name = 'user overview'),
+    path('user/<str:hostname>/', views.user_overview, name = 'user overview'),
 
     path('api/log/sysinfo', views.log_sysinfo_endpoint, name = 'log sysinfo'),
     path('api/log/gamesettings', views.log_gamesettings_endpoint, name = 'log game settings'),
