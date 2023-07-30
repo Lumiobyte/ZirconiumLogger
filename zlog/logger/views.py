@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
@@ -25,6 +26,11 @@ def tobool(value):
         return True
     else:
         return False
+    
+def create_dict(string):
+    string = string.decode('UTF-8')
+    return json.loads(string.replace("'", '"'))
+
 
 ###### FRONTEND VIEWS
 def ping(request):
@@ -101,11 +107,12 @@ def log_sysinfo_endpoint(request):
         return BAD_REQUEST
 
     try: # Try get data from the request
-        hostname = request.POST['hostname']
-        op_sys = request.POST['os']
-        proc = request.POST['processor']
-        pyver = request.POST['pyver']
-    except: 
+        data = create_dict(request.body)
+        hostname = data['hostname']
+        op_sys = data['os']
+        proc = data['processor']
+        pyver = data['pyver']
+    except Exception as e: 
         return BAD_REQUEST
     
     user = get_user(hostname)
@@ -121,13 +128,14 @@ def log_gamesettings_endpoint(request):
         return BAD_REQUEST
     
     try:
-        hostname = request.POST['hostname']
-        res = request.POST['res']
-        mtog = tobool(request.POST['mtog'])
-        stog = tobool(request.POST['stog'])
-        mvol = float(request.POST['mvol'])
-        svol = float(request.POST['svol'])
-        gset = request.POST['gset']
+        data = create_dict(request.body)
+        hostname = data['hostname']
+        res = data['res']
+        mtog = tobool(data['mtog'])
+        stog = tobool(data['stog'])
+        mvol = float(data['mvol'])
+        svol = float(data['svol'])
+        gset = data['gset']
     except: 
         return BAD_REQUEST
     
@@ -175,10 +183,11 @@ def log_click_event_endpoint(request):
         return BAD_REQUEST
 
     try:
-        hostname = request.POST['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
-        action = int(request.POST['action'])
-    except: 
+        data = create_dict(request.body)
+        hostname = data['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(float(data['time']))
+        action = int(data['action'])
+    except:
         return BAD_REQUEST
     
     user = get_user(hostname)
@@ -194,15 +203,16 @@ def log_session_event_endpoint(request):
         return BAD_REQUEST
 
     try:
-        hostname = request.POST['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
-        session_event_type = request.POST['setype']
-        mode = int(request.POST['mode'])
-        elapsed = int(request.POST['elapsed'])
-        score1 = int(request.POST['s1'])
-        score2 = int(request.POST['s2'])
-        bounces = int(request.POST['bounces'])
-        misses = int(request.POST['misses'])
+        data = create_dict(request.body)
+        hostname = data['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(float(data['time']))
+        session_event_type = data['setype']
+        mode = int(data['mode'])
+        elapsed = int(data['elapsed'])
+        score1 = int(data['s1'])
+        score2 = int(data['s2'])
+        bounces = int(data['bounces'])
+        misses = int(data['misses'])
     except: 
         return BAD_REQUEST
     
@@ -230,10 +240,11 @@ def log_error_event_endpoint(request):
         return BAD_REQUEST
 
     try:
-        hostname = request.POST['hostname']
-        local_timestamp = datetime.datetime.fromtimestamp(int(request.POST['time']))
-        err_name = request.POST['err_name']
-        err = request.POST['err']
+        data = create_dict(request.body)
+        hostname = data['hostname']
+        local_timestamp = datetime.datetime.fromtimestamp(float(data['time']))
+        err_name = data['err_name']
+        err = data['err']
     except: 
         return BAD_REQUEST
     
