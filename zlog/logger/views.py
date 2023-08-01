@@ -127,7 +127,7 @@ def log_sysinfo_endpoint(request):
         proc = data['processor']
         pyver = data['pyver']
         screenres = data['screenres']
-        ram = data['physicalmem']
+        ram = int(data['physicalmem'])
     except Exception as e: 
         return BAD_REQUEST
     
