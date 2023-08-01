@@ -9,7 +9,7 @@ class ButtonDefinition(models.Model): # Will be created in admin panel
 class User(models.Model):
 
     first_seen = models.DateTimeField(auto_now_add = True)
-    device_hostname = models.CharField(max_length = 15, default = "?") # individual users are identified by their hostname 
+    device_hostname = models.CharField(max_length = 50, default = "?") # individual users are identified by their hostname 
 
     class Meta:
         ordering = ['first_seen']
