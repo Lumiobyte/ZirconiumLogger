@@ -27,7 +27,7 @@ class SystemInfo(models.Model):
     processor = models.CharField(max_length = 150)
     python_version = models.CharField(max_length = 20)
     screen_res = models.CharField(max_length = 20)
-    physical_memory = models.IntegerField()
+    physical_memory = models.BigIntegerField()
 
     # timezone + locale
 
