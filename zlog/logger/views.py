@@ -133,7 +133,7 @@ def log_sysinfo_endpoint(request):
     
     user = get_user(hostname)
     
-    sysinfo_obj = SystemInfo(user = user, operating_system = op_sys, processor = proc, python_version = pyver, screen_resolution = screenres, physical_memory = ram)
+    sysinfo_obj = SystemInfo(user = user, operating_system = op_sys, processor = proc, python_version = pyver, screen_res = screenres, physical_memory = ram)
     sysinfo_obj.save()
 
     return OK
