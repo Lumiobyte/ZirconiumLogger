@@ -67,12 +67,14 @@
             <div class="info-pane">
                 <h2>User Information</h1>
                 <ul>
-                    <li>Hostname: {{ user_info.hostname }}</li>
-                    <li>First seen: {{ user_info.first_seen }}</li>
+                    <li>Hostname: <span style="color:#89929b">{{ user_info.hostname }}</span></li>
+                    <li>First seen: <span style="color:#89929b">{{ user_info.first_seen }}</span></li>
                     {% if user_info.os != None %}
-                        <li>Operating system: {{ user_info.os }}</li>
-                        <li>Processor: {{ user_info.processor }}</li>
-                        <li>Python: {{ user_info.python_version }}</li>
+                        <li>Operating system: <span style="color:#89929b">{{ user_info.os }}</span></li>
+                        <li>Processor: <span style="color:#89929b">{{ user_info.processor }}</span></li>
+                        <li>Python: <span style="color:#89929b">{{ user_info.python_version }}</span></li>
+                        <li>Screen: <span style="color:#89929b">{{ user_info.screen_resolution }}</span></li>
+                        <li>RAM: <span style="color:#89929b">{{ user_info.ram }} MB</span></li>
                     {% endif %}
                 </ul>
                 <hr>

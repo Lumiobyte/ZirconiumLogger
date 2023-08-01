@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
-BAD_REQUEST = JsonResponse({'reponse': "400 Bad request"}, status = 400)
-OK = JsonResponse({'reponse': "200 OK"}, status = 200)
+BAD_REQUEST = JsonResponse({'response': "400 Bad request"}, status = 400)
+OK = JsonResponse({'response': "200 OK"}, status = 200)
 
 def get_user(hostname):
     user, created = User.objects.get_or_create(device_hostname = hostname)
@@ -75,7 +75,7 @@ def user_overview(request, hostname):
         context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': None}
 
     else:
-        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version}
+        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version, 'screen_resolution': user_sysinfo.screen_res, 'ram': round(user_sysinfo.physical_memory / 1000000)}
     
     context['events'] = []
     context['event_count'] = user_events.count()
@@ -126,12 +126,14 @@ def log_sysinfo_endpoint(request):
         op_sys = data['os']
         proc = data['processor']
         pyver = data['pyver']
+        screenres = data['screenres']
+        ram = data['physicalmem']
     except Exception as e: 
         return BAD_REQUEST
     
     user = get_user(hostname)
     
-    sysinfo_obj = SystemInfo(user = user, operating_system = op_sys, processor = proc, python_version = pyver)
+    sysinfo_obj = SystemInfo(user = user, operating_system = op_sys, processor = proc, python_version = pyver, screen_resolution = screenres, physical_memory = ram)
     sysinfo_obj.save()
 
     return OK

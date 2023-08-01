@@ -23,9 +23,11 @@ class SystemInfo(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     entry_created = models.DateTimeField(auto_now_add = True)
 
-    operating_system = models.CharField(max_length = 100)
-    processor = models.CharField(max_length = 100)
+    operating_system = models.CharField(max_length = 150)
+    processor = models.CharField(max_length = 150)
     python_version = models.CharField(max_length = 20)
+    screen_res = models.CharField(max_length = 20)
+    physical_memory = models.IntegerField()
 
     # timezone + locale
 
