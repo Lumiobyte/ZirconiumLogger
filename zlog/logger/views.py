@@ -75,7 +75,7 @@ def user_overview(request, hostname):
         context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': None}
 
     else:
-        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version, 'screen_resolution': user_sysinfo.screen_res, 'ram': round(user_sysinfo.physical_memory / 1000000)}
+        context['user_info'] = {'first_seen': user.first_seen, 'hostname': hostname, 'os': user_sysinfo.operating_system, 'processor': user_sysinfo.processor, 'python_version': user_sysinfo.python_version, 'screen_resolution': user_sysinfo.screen_res, 'ram': round(user_sysinfo.physical_memory / 100000000)}
     
     context['events'] = []
     context['event_count'] = user_events.count()
